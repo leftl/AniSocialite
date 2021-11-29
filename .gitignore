@@ -34,3 +34,6 @@ MANIFEST
 .env
 .venv
 venv/
+
+# vs code
+.vscode/

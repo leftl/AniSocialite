@@ -27,7 +27,7 @@ source venv/bin/activate
 Install needed dependencies
 
 ```
-pip install requests python-dotenv
+pip3 install requests python-dotenv
 ```
 
 ### Configure
