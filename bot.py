@@ -3,7 +3,7 @@ from pathlib import Path
 from random import randint as rand
 from dotenv import dotenv_values, set_key
 from auth import authenticate
-from queries import *
+from queries import request, GET_ACTIVITES, LIKE_ACTIVITY, GET_USER_ID
 
 API_URL = "https://graphql.anilist.co"
 ENV_PATH = Path(".env")
@@ -20,8 +20,8 @@ def init():
     headers['Authorization'] = f"Bearer {config['access_token']}"
 
     if 'user_id' not in config.keys() or config['user_id'] == "":
-        r = request(API_URL, headers, getUserId);
-        set_key("./.env", "user_id", str(r['data']['UpdateUser']['id']))
+        resp = request(API_URL, headers, GET_USER_ID)
+        set_key("./.env", "user_id", str(resp['data']['UpdateUser']['id']))
 
 def main():
     init()
@@ -32,16 +32,16 @@ def main():
     media_ids = [1, 530]
 
     while True:
-        r = request(API_URL, headers, getActivities, variables={'media_ids' : media_ids});
-        activities = r['data']['Page']['activities']
+        resp = request(API_URL, headers, GET_ACTIVITES, variables={'media_ids' : media_ids})
+        activities = resp['data']['Page']['activities']
 
-        for a in activities:
-            if 'isLiked' not in a.keys():
+        for act in activities:
+            if 'isLiked' not in act.keys():
                 continue
 
-            if not a['isLiked']: 
-                r = request(API_URL, headers, likeActivity, variables = { "activityId" : a['id'] });
-                print(f"Liked: activity id {a['id']} by {a['user']['name']}")
+            if not act['isLiked']:
+                resp = request(API_URL, headers, LIKE_ACTIVITY, variables = { "activityId" : act['id'] })
+                print(f"Liked: activity id {act['id']} by {act['user']['name']}")
                 sleep(4)
 
         sleep(rand(15,25))

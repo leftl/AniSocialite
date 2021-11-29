@@ -1,8 +1,8 @@
-import json
-import requests
 from time import sleep
+import requests
 
-getActivities = '''query ($media_ids: [Int]) {
+
+GET_ACTIVITES = '''query ($media_ids: [Int]) {
     Page(page: 1, perPage: 20) {
         activities(mediaId_in: $media_ids, type_in: [MANGA_LIST, ANIME_LIST], sort: ID_DESC) {
             ... on ListActivity {
@@ -16,7 +16,7 @@ getActivities = '''query ($media_ids: [Int]) {
     }
 }'''
 
-getFollowerAcvitives = '''query ($self_uid: Int) {
+GET_FOLLOWER_ACTIVITES = '''query ($self_uid: Int) {
     Page(page: 1, perPage: 25) {
       pageInfo {
         hasNextPage
@@ -40,7 +40,7 @@ getFollowerAcvitives = '''query ($self_uid: Int) {
   }
 }'''
 
-likeActivity = '''mutation ($activityId: Int) {
+LIKE_ACTIVITY = '''mutation ($activityId: Int) {
     ToggleLikeV2 (id: $activityId, type: ACTIVITY) {
         ... on ListActivity {
             likes {
@@ -50,7 +50,7 @@ likeActivity = '''mutation ($activityId: Int) {
     }
 }'''
 
-getUserId = '''mutation { 
+GET_USER_ID = '''mutation {
     UpdateUser {
         id
     }
@@ -71,7 +71,8 @@ def request(url, headers, query, variables = None):
             sleep(60)
             try:
                 resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
-            except Exception:
+            except Exception as exc:
+                print("[ERROR] Exception encountered: ", exc.args)
                 raise
         else:
             raise

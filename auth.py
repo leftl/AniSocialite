@@ -1,5 +1,4 @@
 import requests
-from requests.structures import CaseInsensitiveDict
 from dotenv import set_key
 
 # OAuth2.0 via requests reference: https://developer.byu.edu/docs/consume-api/use-api/oauth-20/oauth-20-python-sample-code
@@ -21,7 +20,8 @@ def authenticate(config, env_path):
             "redirect_uri": config['client_redirect'],
             "code": auth_code
         })
-    except:
+    except Exception as exc:
+        print("[ERROR] Exception encountered: ", exc.args)
         raise
 
     resp = resp.json()
