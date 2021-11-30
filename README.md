@@ -7,7 +7,10 @@ The objectives of this weekend project were to practice/refamiliarize myself wit
 - OAuth 2.0
 - APIs
 
-This project is UNOFFICIAL and not affiliated with the AniList team at all. Pull requests welcome!
+This project is UNOFFICIAL and not affiliated with the AniList team at all. 
+Tested on Python 3.8 and 3.9.
+
+Pull requests welcome!
 
 > Note: due to fairly strict API rate-limiting, ***not all*** activities will be liked, especially if multiple popular series are being monitored. 
 
@@ -38,7 +41,7 @@ Additionally, the variable `media_ids` in `bot.py` needs to be filled with the s
 ### Run
 To run the bot, simply enter the following from a terminal while in the project's top-level directory (the virtualenv must be activated, see above):
 ```
-python bot.js
+python bot.py
 ```
 
 Use the `Ctrl-c` to terminate the bot.
@@ -47,3 +50,5 @@ Once completed, close the virtualenv:
 ```
 deactivate
 ```
+
+---
