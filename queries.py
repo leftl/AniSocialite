@@ -57,32 +57,24 @@ GET_USER_ID = '''mutation {
 }'''
 
 def request(url, headers, query, variables = None):
-    try:
-        resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
-        resp.raise_for_status()
-    except requests.exceptions.HTTPError:
-        # requested data has been removed or is now private
-        if resp.status_code == 404:
-            return None
-
-        # rate limit exceeded or general server error. sleep and retry once.
-        # assume unrecoverable error if the retry fails.
-        if resp.status_code in (429, 500):
-            print("[ERROR] Rate-limit exceeded. Resting for 1 minute.")
+    # retry all requests up to 10 times.
+    for i in range(0, 10):
+        try:
+            resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError:
+            # HTTP status 429 => rate limited. Sleep for 60 seconds. All other errors sleep for 5 minutes.
             time = 60 if resp.status_code == 429 else 300
+            print(f"[ERROR] Rate limited or general HTTP error: {resp.status_code}. Continuing in {time / 60} minutes.")
             sleep(time)
+
             try:
                 resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
-            except Exception as exc:
-                print("[ERROR] Exception encountered: ", exc.args)
-                raise
-        else:
-            raise
+                resp.raise_for_status()
+            except requests.exceptions.HTTPError:
+                continue
 
-    # # TODO: check header for remaining api calls and time until refresh.
-    # #      LikeToggleV2 doesn't seem to respect the 'X-RateLimit-Remaining' header, cannot find documentation on this.
-    # if int(resp.headers['X-RateLimit-Remaining']) < 5:
-    #     print("[WARN] Approaching rate-limit. Sleeping for 5 secons.")
-    #     sleep(5)
+        return resp.json()
 
-    return resp.json()
+    # all retries failed. return no response.
+    return None

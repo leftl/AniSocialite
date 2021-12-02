@@ -41,6 +41,10 @@ def main():
 
             if not act['isLiked']:
                 resp = request(API_URL, headers, LIKE_ACTIVITY, variables = { "activityId" : act['id'] })
+
+                if resp is None:
+                    continue
+
                 print(f"Liked: activity id {act['id']} by {act['user']['name']}")
                 sleep(4)
 
