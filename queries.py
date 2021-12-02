@@ -64,11 +64,13 @@ def request(url, headers, query, variables = None):
         # requested data has been removed or is now private
         if resp.status_code == 404:
             return None
-        # rate limited. sleep for 1 minute (AniList cool down) and retry once.
-        # assume unrecoverable if request fails again.
-        elif resp.status_code == 429:
+
+        # rate limit exceeded or general server error. sleep and retry once.
+        # assume unrecoverable error if the retry fails.
+        if resp.status_code in (429, 500):
             print("[ERROR] Rate-limit exceeded. Resting for 1 minute.")
-            sleep(60)
+            time = 60 if resp.status_code == 429 else 300
+            sleep(time)
             try:
                 resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
             except Exception as exc:
@@ -77,8 +79,8 @@ def request(url, headers, query, variables = None):
         else:
             raise
 
-    # TODO: check header for remaining api calls and time until refresh.
-    #       LikeToggleV2 doesn't seem to respect the 'X-RateLimit-Remaining' header, cannot find documentation on this.
+    # # TODO: check header for remaining api calls and time until refresh.
+    # #      LikeToggleV2 doesn't seem to respect the 'X-RateLimit-Remaining' header, cannot find documentation on this.
     # if int(resp.headers['X-RateLimit-Remaining']) < 5:
     #     print("[WARN] Approaching rate-limit. Sleeping for 5 secons.")
     #     sleep(5)
