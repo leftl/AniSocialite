@@ -63,11 +63,13 @@ def request(url, headers, query, variables = None):
             resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
+            # retrieved activity/media may be private or deleted.
+            if resp.status_code == 404:
+                break
             # HTTP status 429 => rate limited. Sleep for 60 seconds. All other errors sleep for 5 minutes.
             time = 60 if resp.status_code == 429 else 300
             print(f"[ERROR] Rate limited or general HTTP error: {resp.status_code}. Continuing in {time / 60} minutes.")
             sleep(time)
-
             try:
                 resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
                 resp.raise_for_status()
