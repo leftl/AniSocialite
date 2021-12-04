@@ -1,7 +1,6 @@
 from time import sleep
 import requests
 
-
 GET_ACTIVITES = '''query ($media_ids: [Int]) {
     Page(page: 1, perPage: 20) {
         activities(mediaId_in: $media_ids, type_in: [MANGA_LIST, ANIME_LIST], sort: ID_DESC) {

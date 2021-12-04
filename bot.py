@@ -7,6 +7,7 @@ from queries import request, GET_ACTIVITES, LIKE_ACTIVITY, GET_USER_ID
 
 API_URL = "https://graphql.anilist.co"
 ENV_PATH = Path(".env")
+SLEEP_TIME = 5
 headers = { "Content-Type": "application/json",
             "Accept": "application/json" }
 
@@ -33,6 +34,10 @@ def main():
 
     while True:
         resp = request(API_URL, headers, GET_ACTIVITES, variables={'media_ids' : media_ids})
+
+        if resp is None:
+            continue
+
         activities = resp['data']['Page']['activities']
 
         for act in activities:
@@ -46,8 +51,8 @@ def main():
                     continue
 
                 print(f"Liked: activity id {act['id']} by {act['user']['name']}")
-                sleep(4)
+                sleep(SLEEP_TIME)
 
-        sleep(rand(15,25))
+        sleep(SLEEP_TIME)
 
 main()
