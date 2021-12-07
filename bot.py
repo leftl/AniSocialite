@@ -8,6 +8,7 @@ from queries import request, GET_ACTIVITES, LIKE_ACTIVITY, GET_USER_ID
 API_URL = "https://graphql.anilist.co"
 ENV_PATH = Path(".env")
 SLEEP_TIME = 5
+UID = 0
 headers = { "Content-Type": "application/json",
             "Accept": "application/json" }
 
@@ -26,6 +27,7 @@ def init():
 
 def main():
     init()
+    config = dotenv_values(ENV_PATH)
 
     # CONFIG: The ID of each series (Anime OR Manga) you wish to monitor the social activities of.
     #   Cowboy Bebop: https://anilist.co/anime/1/Cowboy-Bebop/ => ID: 1
@@ -33,7 +35,7 @@ def main():
     media_ids = [1, 530]
 
     while True:
-        resp = request(API_URL, headers, GET_ACTIVITES, variables={'media_ids' : media_ids})
+        resp = request(API_URL, headers, GET_ACTIVITES, variables={'media_ids' : media_ids, 'self_uid' : config['user_id']})
 
         if resp is None:
             continue

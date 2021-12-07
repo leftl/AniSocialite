@@ -1,9 +1,9 @@
 from time import sleep
 import requests
 
-GET_ACTIVITES = '''query ($media_ids: [Int]) {
+GET_ACTIVITES = '''query ($media_ids: [Int], $self_uid: Int) {
     Page(page: 1, perPage: 20) {
-        activities(mediaId_in: $media_ids, type_in: [MANGA_LIST, ANIME_LIST], sort: ID_DESC) {
+        activities(mediaId_in: $media_ids, type_in: [MANGA_LIST, ANIME_LIST], sort: ID_DESC, id_not: $self_uid) {
             ... on ListActivity {
                 id
                 isLiked
@@ -63,7 +63,7 @@ def request(url, headers, query, variables = None):
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             # retrieved activity/media may be private or deleted.
-            if resp.status_code == 404:
+            if resp.status_code in [400, 404]:
                 break
             # HTTP status 429 => rate limited. Sleep for 60 seconds. All other errors sleep for 5 minutes.
             time = 60 if resp.status_code == 429 else 300
