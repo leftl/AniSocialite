@@ -69,11 +69,12 @@ def request(url, headers, query, variables = None):
             time = 60 if resp.status_code == 429 else 300
             print(f"[ERROR] Rate limited or general HTTP error: {resp.status_code}. Continuing in {time / 60} minutes.")
             sleep(time)
-            try:
-                resp = requests.post(url = url, headers = headers, json = {'query': query, 'variables': variables})
-                resp.raise_for_status()
-            except requests.exceptions.HTTPError:
-                continue
+            # try again (10 retries max)
+            continue
+        except requests.exceptions.ConnectionError:
+            print(f"[ERROR] Connection error encountered: service may be down. Sleeping for 5 minutes.")
+            sleep(300)
+            continue
 
         return resp.json()
 
