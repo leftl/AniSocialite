@@ -14,9 +14,7 @@ Pull requests welcome!
 
 > Note: due to fairly strict API rate-limiting, ***not all*** activities will be liked, especially if multiple popular series are being monitored. 
 
----
-
-### Setup
+## Setup
 Create and activate a new virtualenv in the project directory
 
 ```
@@ -33,12 +31,12 @@ Install needed dependencies
 pip3 install requests python-dotenv
 ```
 
-### Configure
+## Configure
 Rename `.env.example` to `.env` and follow the comments/links to ensure the correct values are inserted for each environment variable.
 
 Additionally, the variable `media_ids` in `bot.py` needs to be filled with the series ID for each series you wish to monitor. The series ID can be found in the URL of the series page. For example: Cowboy Bebop has the URL [https://anilist.co/anime/**1**/Cowboy-Bebop/](https://anilist.co/anime/1/Cowboy-Bebop/), with the ID **1** found following `/anime/`.
 
-### Run
+## Run
 To run the bot, simply enter the following from a terminal while in the project's top-level directory (the virtualenv must be activated, see above):
 ```
 python bot.py
@@ -50,5 +48,3 @@ Once completed, close the virtualenv:
 ```
 deactivate
 ```
-
----
