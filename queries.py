@@ -2,8 +2,8 @@ from time import sleep
 import requests
 
 GET_ACTIVITES = '''query ($media_ids: [Int], $self_uid: Int) {
-    Page(page: 1, perPage: 24) {
-        activities(mediaId_in: $media_ids, type_in: [MANGA_LIST, ANIME_LIST], sort: ID_DESC, userId_not: $self_uid) {
+    Page(page: 1, perPage: 50) {
+        activities(mediaId_in: $media_ids, type_in: [MANGA_LIST, ANIME_LIST], userId_not: $self_uid, sort: ID_DESC) {
             ... on ListActivity {
                 id
                 isLiked

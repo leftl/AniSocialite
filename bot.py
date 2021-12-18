@@ -44,18 +44,19 @@ def main():
 
         activities = resp['data']['Page']['activities']
 
-        for act in activities:
-            if 'isLiked' not in act.keys():
-                continue
-
-            if not act['isLiked']:
-                resp = request(API_URL, headers, LIKE_ACTIVITY, variables = { "activityId" : act['id'] })
-
-                if resp is None:
+        if activities:
+            for act in activities[::-1]:
+                if 'isLiked' not in act.keys():
                     continue
 
-                print(f"Liked: activity id {act['id']} by {act['user']['name']}")
-                sleep(SLEEP_TIME)
+                if not act['isLiked']:
+                    resp = request(API_URL, headers, LIKE_ACTIVITY, variables = { "activityId" : act['id'] })
+
+                    if resp is None:
+                        continue
+
+                    print(f"Liked: activity id {act['id']} by {act['user']['name']}")
+                    sleep(SLEEP_TIME)
 
         sleep(SLEEP_TIME)
 
